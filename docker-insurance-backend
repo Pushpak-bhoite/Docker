@@ -1,0 +1,57 @@
+# FROM node:20-alpine
+
+# RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
+
+# WORKDIR /usr/src/node-app
+
+# # COPY package.json yarn.lock ./ 
+# # COPY package.json package-lock.json ./
+# COPY package*.json ./
+
+
+# USER node
+
+# # RUN yarn install --pure-lockfile
+# RUN npm install
+
+# COPY --chown=node:node . . 
+
+# EXPOSE 3000
+
+# CMD ["npm", "run","dev"]  
+
+
+
+
+
+
+FROM node:20-alpine
+
+# Create directory and set permissions
+RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
+
+WORKDIR /usr/src/node-app
+
+# Copy package files with correct ownership
+COPY --chown=node:node package*.json ./
+
+# Create .npmrc file with correct private registry settings
+RUN echo "registry=http://npm.ngminds.com/" > .npmrc && \
+    echo "//npm.ngminds.com/:_authToken=cc04Z9CgwH6H8+Qz6jiJPUxzrLo5j7jERR6R7t3gEzE=" >> .npmrc && \
+    chown node:node .npmrc
+
+# Switch to node user
+USER node
+
+# Install dependencies
+RUN npm install --force
+
+# Remove .npmrc after installation (for security)
+RUN rm -f .npmrc
+
+# Copy the rest of the application code with correct ownership
+COPY --chown=node:node . .
+
+EXPOSE 8080
+
+CMD ["npm", "run", "dev"]

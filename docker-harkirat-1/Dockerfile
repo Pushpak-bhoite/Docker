@@ -17,7 +17,11 @@ COPY . .
 EXPOSE 3000
 
 # Define the command to run your app _Below command is when you've set start script in package.json 
-CMD ["npm", "start"]  
+# CMD ["npm", "start"]  
 # Otherwise use this below 
-# CMD ["node", "index.js"] 
+# CMD ["node", "index.js"]
+
+#for dev mode 
+CMD ["npm", "run","dev"]  
+
 
